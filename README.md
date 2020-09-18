@@ -22,7 +22,7 @@
 
 ## Demo
 ### Color space convertion
-![image](https://github.com/sfwang20/FilterImageGUI/blob/master/demo/hsv.png)
+![image](https://github.com/sfwang20/FilterImageGUI/blob/master/demo/color_space.png)
 
 ### Lomography effect
 ![image](https://github.com/sfwang20/FilterImageGUI/blob/master/demo/lomo.png)
