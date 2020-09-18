@@ -1,9 +1,10 @@
 import cv2
 import numpy as np
 
-a = cv2.imread('2.jpg')
+file_name = 'faceDetect.png'
 
+input = cv2.imread(file_name)
 
-c = cv2.resize(a, (1024,576))
+result = cv2.resize(input, (750,421))
 
-cv2.imwrite('2.png', c)
+cv2.imwrite(file_name, result)
