@@ -11,20 +11,18 @@ using namespace cv;
 
 Mat img;
 
-// color space
+// transform color space
 enum class colorSpace { BGR, Gray, HSV, HSL };
 void showBGR(int, void*);
 void showGray(int, void*);
 void showHSV(int, void*);
 void showHSL(int, void*);
 void applyColorSpace(colorSpace);
-
 // Filters
 void equalize(int, void*);
 void lomo(int, void*);
 void cartoon(int, void*);
 void sketch(int, void*);
-
 // Detect edges
 bool applySobel = false;
 bool applyBlur = false;
@@ -48,7 +46,8 @@ void brightnessCallback(int, void*);
 void adjustContrastAndBright();
 
 
-int main(int argc, const char** argv) {
+int main(int argc, const char** argv) 
+{
     // comaandLine pasrse
     const char* keys =
     {
@@ -61,20 +60,20 @@ int main(int argc, const char** argv) {
     if (parser.has("help"))
     {
         parser.printMessage();
-        return 0;
+        return EXIT_FAILURE;
     }
 
     String imgFile = parser.get<String>(0);
 
-    if (!parser.check())
+    if (parser.check() == false)
     {
         parser.printErrors();
-        return 0;
+        return EXIT_FAILURE;
     }
 
     // Load image
     img = imread(imgFile);
-    if (!img.data)
+    if (img.data == NULL)
     {
         std::cout << "Load image failed! Please check and try again." << std::endl;
         return EXIT_FAILURE;
@@ -88,24 +87,21 @@ int main(int argc, const char** argv) {
     createButton("RGB", showBGR, NULL, QT_RADIOBOX, 1);
     createButton("Gray", showGray, NULL, QT_RADIOBOX, 0);
     createButton("HSV", showHSV, NULL, QT_RADIOBOX, 0);
-    createButton("HSL", showHSL, NULL, QT_RADIOBOX, 0);    
-    
+    createButton("HSL", showHSL, NULL, QT_RADIOBOX, 0);        
     // Filters
     createButton("Equalize histogram", equalize, NULL, QT_NEW_BUTTONBAR, 0);
     createButton("Lomography effect", lomo, NULL, QT_PUSH_BUTTON, 0);
     createButton("Cartonize effect", cartoon, NULL, QT_PUSH_BUTTON, 0);
     createButton("Sketch", sketch, NULL, QT_PUSH_BUTTON, 0);
-
     // Detect edges
     createButton("Sobel", sobelImage, NULL, QT_NEW_BUTTONBAR, 0);
     createButton("Canny", cannyImage, NULL, QT_PUSH_BUTTON, 0);
     createButton("Laplacian", laplaceImage, NULL, QT_PUSH_BUTTON, 0);
-    // Blur image
+    
     createButton("Blur", blurImage, NULL, QT_CHECKBOX, 0);
-
-    // Detect faces (if the input image has faces)
+    
     createButton("Show histogram", showHistogram, NULL, QT_NEW_BUTTONBAR, 0);
-    // show histogram of image
+    // Detect faces (if the input image has faces)
     createButton("Face detect", faceDetect, NULL, QT_PUSH_BUTTON, 0);
     
     // contrast and brightness
@@ -167,7 +163,6 @@ void applyColorSpace(colorSpace s) {
     }
 }
 
-
 void showHistogram(int state, void* userData)
 {
     // Separate image in BGR
@@ -217,10 +212,8 @@ void showHistogram(int state, void* userData)
             Scalar(0, 0, 255)
         );
     }
-
     imshow("Histogram", histImage);
 }
-
 
 void equalize(int state, void* userData)
 {
@@ -240,11 +233,9 @@ void equalize(int state, void* userData)
     imshow("Equalized", result);
 }
 
-
 void lomo(int state, void* userData)
 {
     Mat result;
-
     const double E = std::exp(1.0);
     // Create Lookup table for color curve effect
     Mat lut(1, 256, CV_8UC1);
@@ -268,15 +259,10 @@ void lomo(int state, void* userData)
     // Convert the result to float to allow multiply by 1 factor
     Mat resultf;
     result.convertTo(resultf, CV_32FC3);
-
     multiply(resultf, halo, resultf);
-
-    // convert to 8 bits
     resultf.convertTo(result, CV_8UC3);
-
     imshow("Lomograpy", result);
 }
-
 
 void cartoon(int state, void* userData)
 {
@@ -323,9 +309,7 @@ void cartoon(int state, void* userData)
 
     // Multiply color and edges matrices
     multiply(resultf, imgCanny3c, resultf);
-
     resultf.convertTo(result, CV_8UC3);
-
     imshow("Result", result);
 }
 
@@ -370,20 +354,22 @@ void applyFilters()
     Mat result, result_gray;
     img.copyTo(result);
     cvtColor(result, result_gray, COLOR_BGR2GRAY);
-
-    if (applySobel) {
+    if (applySobel) 
+    {
         Sobel(result, result, CV_8U, 1, 1);
     }
-    if (applyCanny) {
+    if (applyCanny) 
+    {
         Canny(result_gray, result, 50, 150);
     }
-    if (applyLaplace) {
+    if (applyLaplace) 
+    {
         Laplacian(result_gray, result, CV_8U);
     }
-    if (applyBlur) {
+    if (applyBlur) 
+    {
         blur(result, result, Size(5, 5));
-    }
-    
+    }    
     imshow("Lena", result);
 }
 
@@ -395,9 +381,9 @@ void faceDetect(int, void*)
     CascadeClassifier faceDectetor("../data/haarcascade_frontalface_alt.xml");
     std::vector<Rect> faces;
     faceDectetor.detectMultiScale(result, faces);
-    for (const Rect face : faces) {
+    for (const Rect face : faces)     
         rectangle(result, face, Scalar(0, 0, 255), 2);
-    }
+    
     imshow("Lena", result);
 }
 
